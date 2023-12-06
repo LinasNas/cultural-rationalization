@@ -1,5 +1,5 @@
 # cultural-rationalization
-A repository with the code to run experiments for cultural evolution and rationalization project.
+This repository stores the code used in the experiments for the cultural evolution and rationalization project. The project is primarily written in Python and Javascript, and uses the Flask framework to run the experiments.
 
 ## Setup
 To run this experiment, please start by installing the ```requirements.txt``` file. This can be done by running the following command in the terminal:
