@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=attention_check]").val()) {
+            // save attention check answer to database
+            $(".main").addClass("loading")
+            $.post("/api/guess/3", {
+                attention_check: $(`input[name=attention_check]:checked`).val()
+            }).done(data => {
+                    // redirect to the desired next page
+                    location.href = "/6/finish"  // Adjust the redirection as needed
+            }).fail(err => {
+                    console.error(err)
+            })
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>What was the forest's name?</h2>
+    <form class="flex column">
+        <div>
+            <input type="radio" name="attention_check" value="Ferngrove"> Ferngrove
+            <input type="radio" name="attention_check" value="Thornthicket">Thornthicket
+            <input type="radio" name="attention_check" value="Whisperwood">Whisperwood
+        </div>
+    </form>
+    <a class="button primary flex-item flex-margin-small submit">Continue</a>
+</div>
+{% endblock %}

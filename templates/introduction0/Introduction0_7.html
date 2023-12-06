@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>Introduction</h2>
+    <p> <b>Please read the following directions carefully:</b></p>
+    
+    <p>In this experiment, imagine you are a member of a community where people often eat a soup made from mushrooms they collect in a nearby forest named Ferngrove.
+    </p>
+
+    <p> 
+    In a moment we will put you in the forest.  You will be able to collect any mushrooms you wish and add them to a pot.  For any mushroom you wish to add to the pot, just move yourself on top of it, and it will get added. </p>
+    <p><b>There are four different types of mushrooms that grow in the forest.  Here is what they look like:</b></p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:400px" src="{{ url_for('static', filename='graphics/mushrooms.png') }}" /> </a>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <a href="/7/Introduction1" class="button primary consent">Next</a>
+   
+</div>
+
+{% endblock %}
+
+
+<!--target="_blank"-->

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var isTutorialPlayed = false;  // Flag to check if a tutorial has been played
+    var currentGeneration = 4;
+
+    function startGame() {
+        $(".tutorial_player").hide()
+        $(".your_turn, .instructions-container").show()
+        $("#steps_left, .instructions").show()  // Show steps and instructions
+
+        if (isTutorialPlayed) {  // Only show rewatch button and third rule if a tutorial has been played
+            $(".rewatch_players").show();
+            $("#rule_three").show();
+        }
+
+        game = new Game(player.number_of_moves, $(".grid-container"))
+    }
+
+    function startTutorial(tutorial, colors) {
+        console.log("TUTORIAL", tutorial)
+        console.log("COLORS", colors)
+        
+        $("#steps_left, .instructions, #rule_three").hide()  // Hide steps, instructions and third rule during tutorial
+        tutorial = new Tutorial($(".grid-container"), tutorial, colors, startGame, 1000, 2000)
+    }
+
+    // Listen for the space bar press event
+    $(document).on('keydown', function(event) {
+        if (event.which == 32) {  // 32 is the keycode for the space bar
+            event.preventDefault();  // Prevents any default behavior
+            window.location.href = "/" + currentGeneration + "/rules";  // Redirect to the rules page for the current generation
+        }
+    });
+    
+    $(function() {
+        $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide()  // Hide rewatch button and third rule initially
+
+        // get current player
+        $.getJSON("/api/player", data => {
+            player = data.player
+            console.log(player)
+                
+            // check if previous players need to be shown
+            // OLD: generation-static
+            // $.getJSON("/api/player/tutorial", data => {
+            // NEW: generation-dynamic
+            // Check if previous players need to be shown
+            $.getJSON("/api/" + currentGeneration + "/player/tutorial", data => {
+
+                console.log(data)
+                if (data.tutorial && data.colors) {
+                    if(data.tutorial.length > 0 && data.colors.length > 0) {  // Additional check here
+                        isTutorialPlayed = true;  // Set flag to true as a tutorial is being played
+                    }
+                    startTutorial(data.tutorial, data.colors)
+                } else {
+                    startGame()
+                }
+
+                // UI stuff
+                $(".main").removeClass("loading")
+            })
+        })
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex row">
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container", style="margin-top: 10px">
+            <b>Items Stepped On:</b>
+        </div>
+    </div>
+
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="tutorial_player">Previous player&nbsp;<span class="tutorial_player_data">1</span></div>
+        <div class="your_turn" style="margin-bottom: 0;">Your turn!</div>
+        <br>
+        <div style="text-align: center;">
+            <div class="instructions" style="text-align: left;">
+                <ol>
+                    <p><b>Please read the following instructions carefully before playing:</b></p>
+                    <li>Use your arrow keys to navigate through the grid. The only restriction on your movement is that you can't move outside of the grid.</li>
+                    <br>
+                    <li>When you are finished moving, press the spacebar to move to the next page</li>
+                    <br>
+                    <li id="rule_three">If you  wish to rewatch the previous players you were shown, click the button below.</li>
+                </ol>
+            </div>
+            <br>
+            <br>
+            <a href="/4/play" class="button primary rewatch_players" style="margin-bottom: 20px;">Rewatch Players</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+

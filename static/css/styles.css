@@ -1,0 +1,288 @@
+@import "flex.css";
+
+/* variables */
+
+:root {
+    --primary: #1D9BF0;
+    --secondary: #0f1419;
+    --white: #FFFFFF;
+    --grey: #666666;
+    --red: #f4212e;
+
+    --margin-large: 4rem;
+    --margin-medium: 3rem;
+    --margin-small: 2rem;
+    --margin-tiny: 1rem;
+
+    --font-large: 3rem;
+    --font-medium: 2.25rem;
+
+    --transition: all 0.18s cubic-bezier(0.25, 0, 0.5, 1), outline 0s, outline-offset 0s, border-width 0s;
+}
+
+/* general */
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    outline: none;
+}
+
+.relative {
+    position: relative;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--white);
+    color: var(--secondary);
+}
+
+a {
+    text-decoration: none;
+}
+
+.loading {
+    position: relative;
+}
+
+.loading *, .deleted, .deactivated {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.loading:before {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: '';
+    background: url(/static/graphics/loader.svg) no-repeat center center;
+    background-size: 3.25rem 3.25rem;
+}
+
+div.main {
+    width: 100%;
+    min-height: 100vh;
+    padding: var(--margin-large);
+}
+
+.tutorial_player, .your_turn {
+    font-size: var(--font-medium);
+    font-weight: 700;
+}
+
+.instructions-container {
+    margin-top: var(--margin-medium);
+}
+
+.grid-container {
+    transition: var(--transition);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: 0;
+    height: 600px;
+    width: 600px;
+}
+
+.grid-item {
+    position: relative;
+    border: 1px solid black;
+    background-color: #B0BEC5 !important;
+    aspect-ratio: 1;
+}
+
+.grid-item::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+}
+
+.grid-item.active::before {
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    background-image: url('../graphics/pla.png');
+    background-repeat: no-repeat; /* This prevents the image from repeating. */
+    background-position: center; /* This centers the background image. */
+    transform: translate(-50%, -50%); /* This centers the pseudo-element itself. */
+    z-index: 1000000;
+}
+
+/* colors */
+
+.primary {
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    color: #fff;
+}
+
+.secondary {
+    background-color: var(--secondary);
+    border: 2px solid var(--secondary);
+    color: #fff;
+}
+
+.bordered {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.white {
+    background-color: var(--white);
+    border: 2px solid var(--white);
+    color: var(--secondary);
+}
+
+.no-border {
+    border: none;
+}
+
+/* buttons */
+
+.button {
+    font-weight: bold;
+    padding: .75rem 1.5rem;
+    border-radius: 1.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.button.small {
+    padding: .75em 1rem;
+    border-radius: 1.5rem;
+}
+
+.button.click {
+    transform: scale(0.9, 0.9);
+}
+
+/* inputs */
+
+div[contenteditable] {
+    position: relative;
+    padding: .5rem 0;
+    line-height: 1.5;
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+    word-break: break-word;
+    outline: none;
+}
+
+div[contenteditable],
+div[contenteditable] > * {
+    white-space: pre-wrap;
+}
+
+div[contenteditable] + label {
+    position: absolute;
+    left: 0;
+    top: .25rem;
+    font-size: .75rem;
+    font-weight: bold;
+    background: none;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+div[contenteditable]:focus + label {
+    opacity: 1;
+}
+
+div[placeholder] {
+    padding: 1.875rem;
+    border: 2px solid var(--secondary);
+    border-radius: 1.875rem;
+}
+
+div[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: rgba(12, 26, 36, .5);
+}
+
+div[placeholder]:empty:focus:before {
+    content: "";
+}
+
+.buttons {
+    width: 400px;
+    margin: 0 auto;
+    display: inline;}
+    
+.action_btn {
+    width: 400px;
+    margin: 0 auto;
+    display: inline;
+}
+
+.controls {
+    display: flex;
+}
+      
+.radio {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ }
+
+ .game-image {
+    width: 200px; /* adjust this value as needed */
+    height: auto; /* keep aspect ratio */
+}
+
+.red-circle {
+    width: 75px;
+    height: 75px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 100px; /* adjust this value to create space between image and circle */
+}
+
+.image-and-circle {
+    display: flex;
+    align-items: center; /* aligns items vertically in the center */
+    justify-content: center; /* centers items horizontally */
+}
+
+.tile-background-1 {
+    background: url("/static/graphics/m1.png") no-repeat center center;
+    background-size: contain;
+}
+
+.tile-background-2 {
+    background: url("/static/graphics/m2.png") no-repeat center center;
+    background-size: contain;
+}
+
+.tile-background-3 {
+    background: url("/static/graphics/m3.png") no-repeat center center;
+    background-size: contain;
+}
+
+.tile-background-4 {
+    background: url("/static/graphics/m4.png") no-repeat center center;
+    background-size: contain;
+}
+
+.collected-tile {
+    width: 55px; /* or any value you desire */
+    height: 55px; /* or any value you desire */
+    display: inline-block; /* to align them in a row */
+}
+

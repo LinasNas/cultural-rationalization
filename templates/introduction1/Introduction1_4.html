@@ -1,0 +1,34 @@
+
+
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>Introduction</h2>
+    <p> <b>Please read the following directions carefully:</b></p>
+    <p>In a moment you’ll have the opportunity to move around a grid representing the forest, like this:
+    </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Grid"> <img class="game-image" style= "width:300px" src="{{ url_for('static', filename='graphics/Grid.png') }}" /> </a>
+    </div>
+    <br>
+    <br>
+    <p>Any time you move on to a square with a mushroom, you will put it into your soup.  If you don’t move on to a square with a mushroom, it won’t go into your soup.  When you are done collecting any mushrooms you’d like, press the spacebar to indicate that the soup is ready.
+    </p>
+        <br>
+        <br>
+    <a href="/4/introduction" class="button primary consent">Next</a>
+   
+</div>
+
+{% endblock %}
+
+
+<!--target="_blank"-->

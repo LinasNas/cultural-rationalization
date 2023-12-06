@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=valuesYN]").val()) {
+            // save rules guess to database
+        $(".main").addClass("loading")
+        $.post("/api/guess/1", {
+            valuesYN: $(`input[name=valuesYN]:checked`).val()
+        }).done(data => {
+                // redirect to rules2
+                location.href = "/7/rules2"
+        }).fail(err => {
+                console.error(err)
+        })
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>A few questions</h2>
+    <p>As you collected mushrooms, did you think that certain ones would be better for your soup than others?</p>
+    <form class="flex column">
+        <div>
+                <input type="radio" name="valuesYN" value="Yes">Yes
+                <input type="radio" name="valuesYN" value = "No">No
+        </div>
+    </form>
+    <a class="button primary flex-item flex-margin-small submit">Continue</a>
+</div>
+{% endblock %}

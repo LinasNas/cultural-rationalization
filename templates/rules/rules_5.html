@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=rules]").val().trim()) {
+            // save rules guess to database
+            $(".main").addClass("loading")
+            $.post("/api/guess", {
+                rules: $("input[name=rules]").val().trim()
+            }).done(data => {
+                // redirect to rules1
+                location.href = "/5/rules1"
+            }).fail(err => {
+                console.error(err)
+            })
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>A few questions</h2>
+    <p>We’re curious about your thinking process. Please tell us what you were thinking as you watched other players collect their mushrooms, and what you were thinking as you collected the mushrooms.</p>
+    <div class="flex-item stretch flex-margin-small" id="rules" contenteditable="true" placeholder="Enter your thoughts here">{% if player.rules %}{{ player.rules }}{% endif %}</div>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+</div>
+{% endblock %}
