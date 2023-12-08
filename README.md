@@ -2,7 +2,7 @@
 This repository stores the code used in the experiments for the cultural evolution and rationalization project. The project is primarily written in Python, Javascript, and HTML, and uses the Flask library to run the experiments. The main authors of this project are: Fiery Cushman, Danish Bajwa, and Linas Nasvytis.
 
 ## Experiment overview
-The folder ```experiment1``` contains all the code needed to run the experiment that is specified in our preregistration form. Later versions of the experiment will be added to this repository as they are completed.
+The folder ```experiment_rat1``` contains all the code needed to run the experiment that is specified in our preregistration form. Later versions of the experiment will be added to this repository as they are completed.
 
 ## Setup
 To run this experiment, please start by installing the ```requirements.txt``` file. This can be done by running the following command in the command line terminal:
