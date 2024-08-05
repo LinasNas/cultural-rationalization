@@ -24,7 +24,7 @@ This experiment is built using Flask. In order to run it, please first navigate 
 
 ```flask run```
 
-4. In the command line, you will now see a URL where the application is running. To access the application, please copy and paste the URL and **importantly, specify which generation you would like to play the game as by adding "/gen_number" at the end of the URL** Each generation has a separate URL, so that the experiment could be run sequentially. Generations are numbered from 0-7, with 0 being the initial generation. 
+4. In the command line, you will now see a URL where the application is running. To access the application, please copy and paste the URL and **importantly, specify which generation you would like to play the game as by adding "/gen_number" at the end of the URL** Each generation has a separate URL, so that the experiment could be run sequentially. Generations are numbered from 0-7, with 0 being the initial generation.
 
 For example, to run the experiment for participants in generation 0, you would use the following URL:
 http://sever_number:port_number/0
@@ -32,13 +32,13 @@ http://sever_number:port_number/0
 To run the experiment for participants in generation 1, you would use the following URL:
 http://sever_number:port_number/1
 
-Similar logic appplies for generations 2-7. 
+Similar logic appplies for generations 2-7.
 
 As an example, if you are running the experiment locally, the URL for generation 1 could look like this: http://127.0.0.1:5000/1
 
-Once there is sufficient player data from one generation (e.g. generation 0), participants in the subsequent generation (e.g. generation 1) will be automatically shown the tutorials of the 3 players with the highest scores from the previous generation. 
+Once there is sufficient player data from one generation (e.g. generation 0), participants in the subsequent generation (e.g. generation 1) will be automatically shown the tutorials of the 3 players with the highest scores from the previous generation.
 
 ## Notes on potential errors
-1. If you are running this application locally, we recommend you use a private session on your browser to avoid cookies, and launch each new session on a new broswer window. 
+1. If you are running this application locally, we recommend you use a private session on your browser to avoid cookies, and launch each new session on a new broswer window.
 
-2. If you are facing any issues with data storage or saving, please see the ```db.py``` script. 
+2. If you are facing any issues with data storage or saving, please see the ```db.py``` script.
