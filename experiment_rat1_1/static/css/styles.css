@@ -1,0 +1,545 @@
+@import "flex.css";
+
+/* variables */
+
+:root {
+    --primary: #1D9BF0;
+    --secondary: #0f1419;
+    --white: #FFFFFF;
+    --grey: #666666;
+    --red: #f4212e;
+
+    --margin-large: 4rem;
+    --margin-medium: 3rem;
+    --margin-small: 2rem;
+    --margin-tiny: 1rem;
+
+    --font-large: 3rem;
+    --font-medium: 2.25rem;
+
+    --transition: all 0.18s cubic-bezier(0.25, 0, 0.5, 1), outline 0s, outline-offset 0s, border-width 0s;
+}
+
+/* general */
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    outline: none;
+}
+
+.relative {
+    position: relative;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--white);
+    color: var(--secondary);
+}
+
+a {
+    text-decoration: none;
+}
+
+.loading {
+    position: relative;
+}
+
+.loading *, .deleted, .deactivated {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.loading:before {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: '';
+    background: url(/static/graphics/loader.svg) no-repeat center center;
+    background-size: 3.25rem 3.25rem;
+}
+
+div.main {
+    width: 100%;
+    min-height: 100vh;
+    padding: var(--margin-large);
+}
+
+.tutorial_player {
+    font-size: var(--font-medium);
+    font-weight: 700;
+}
+
+.your_turn {
+    font-size: var(--font-medium);
+    font-weight: 700;
+    position: absolute !important;
+    top: 16% !important; /* Adjust as needed */
+    right: 11% !important; /* Adjust as needed */
+    text-align: center !important;
+}
+
+.instructions-container {
+    margin-top: var(--margin-medium);
+}
+
+.instructions{
+    position: absolute !important;
+    top: 20% !important; /* Adjust as needed */
+    right: 7% !important; /* Adjust as needed */
+    text-align: center !important;
+    width: 300px !important; /* Adjust as needed for your layout */
+}
+
+
+.grid-container {
+    transition: var(--transition);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-gap: 0;
+    height: 600px;
+    width: 600px;
+}
+
+.grid-item {
+    position: relative;
+    border: 1px solid black;
+    background-color: #B0BEC5 !important;
+    aspect-ratio: 1;
+}
+
+.grid-item::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+}
+
+.grid-item.active::before {
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    background-image: url('../graphics/pla.png');
+    background-repeat: no-repeat; /* This prevents the image from repeating. */
+    background-position: center; /* This centers the background image. */
+    transform: translate(-50%, -50%); /* This centers the pseudo-element itself. */
+    z-index: 1000000;
+    background-size: contain;
+}
+
+/* colors */
+
+.primary {
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    color: #fff;
+}
+
+.secondary {
+    background-color: var(--secondary);
+    border: 2px solid var(--secondary);
+    color: #fff;
+}
+
+.bordered {
+    background-color: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.white {
+    background-color: var(--white);
+    border: 2px solid var(--white);
+    color: var(--secondary);
+}
+
+.no-border {
+    border: none;
+}
+
+/* buttons */
+
+.button {
+    font-weight: bold;
+    padding: .75rem 1.5rem;
+    border-radius: 1.75rem;
+    cursor: pointer;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.button.small {
+    padding: .75em 1rem;
+    border-radius: 1.5rem;
+}
+
+.button.click {
+    transform: scale(0.9, 0.9);
+}
+
+/* inputs */
+
+div[contenteditable] {
+    position: relative;
+    padding: .5rem 0;
+    line-height: 1.5;
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+    word-break: break-word;
+    outline: none;
+}
+
+div[contenteditable],
+div[contenteditable] > * {
+    white-space: pre-wrap;
+}
+
+div[contenteditable] + label {
+    position: absolute;
+    left: 0;
+    top: .25rem;
+    font-size: .75rem;
+    font-weight: bold;
+    background: none;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+div[contenteditable]:focus + label {
+    opacity: 1;
+}
+
+div[placeholder] {
+    padding: 1.875rem;
+    border: 2px solid var(--secondary);
+    border-radius: 1.875rem;
+}
+
+div[placeholder]:empty:before {
+    content: attr(placeholder);
+    color: rgba(12, 26, 36, .5);
+}
+
+div[placeholder]:empty:focus:before {
+    content: "";
+}
+
+.buttons {
+    width: 400px;
+    margin: 0 auto;
+    display: inline;}
+    
+.action_btn {
+    width: 400px;
+    margin: 0 auto;
+    display: inline;
+}
+
+.controls {
+    display: flex;
+}
+      
+.radio {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ }
+
+ .game-image {
+    height: auto; /* keep aspect ratio */
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.red-circle {
+    width: 75px;
+    height: 75px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 100px; /* adjust this value to create space between image and circle */
+}
+
+.image-and-circle {
+    display: flex;
+    align-items: flex-end; /* aligns items vertically in the center */
+    justify-content: center; /* centers items horizontally */
+}
+
+.tile-background-1 {
+    background: url("/static/graphics/m1.png") no-repeat center center;
+    background-size: 60px;
+}
+
+.tile-background-2 {
+    background: url("/static/graphics/m2.png") no-repeat center center;
+    background-size: 60px;
+}
+
+.tile-background-3 {
+    background: url("/static/graphics/m3.png") no-repeat center center;
+    background-size: 60px;
+}
+
+.tile-background-4 {
+    background: url("/static/graphics/m4.png") no-repeat center center;
+    background-size: 60px;
+}
+
+.tile-background-5 {
+    background: url("/static/graphics/pot.png") no-repeat center center;
+    background-size: 70%; /* Make the background larger than the container */
+    width: 100%; /* Adjust based on your tile size */
+    height: 100%; /* Adjust based on your tile size */
+}
+
+.tile-background-6 {
+    background: url("/static/graphics/grinder.png") no-repeat center;
+    background-size: 90% auto; /* Adjust the size to maintain aspect ratio */
+    width: 100%; /* Full width of the tile */
+    height: 100%; /* Full height of the tile */
+    display: flex;
+    align-items: flex-end; /* Align contents to the bottom */
+    justify-content: center; /* Center contents horizontally */
+    background-position: center calc(100% - 7px); /* Adjust the vertical position */
+}
+
+
+.tile-7 {
+    background: url("/static/graphics/med.png") no-repeat center center;
+    background-size: 70%; /* Make the background larger than the container */
+    width: 100%; /* Adjust based on your tile size */
+    height: 100%; /* Adjust based on your tile size */
+}
+
+.boiled-subscript-right {
+    position: absolute;
+    width: 23px;
+    margin-left: 4px;
+    right: -8px;  
+    bottom: 0;
+}
+
+.boiled-subscript-left {
+    position: absolute;
+    width: 23px;
+    margin-left: 4px;
+    left: -8px; 
+    bottom: 0;
+}
+
+.collected-tile {
+    width: 50px; /* or any value you desire */
+    height: 50px; /* or any value you desire */
+    display: inline-block; /* to align them in a row */
+    background-size: contain; /* Scale the image to fit the content box */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-position: center; 
+    position: relative;/* Center the background image */
+    margin-left: 14px;
+    
+}
+
+.boiling-message {
+    display: inline-block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--primary); /* Primary color for text */
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap; /* Keep the text in one line */
+}
+
+.grinding-message {
+    display: inline-block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--primary); /* Primary color for text */
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap; /* Keep the text in one line */
+}
+
+.dots .dot {
+    opacity: 0; /* Start with dots hidden */
+    animation: blink-dot 1.5s infinite;
+    display: inline-block;
+}
+
+/* Individual animation delays */
+.dots .dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dots .dot:nth-child(2) {
+    animation-delay: 0.5s; /* Delays second dot */
+}
+
+.dots .dot:nth-child(3) {
+    animation-delay: 1s; /* Delays third dot */
+}
+
+@keyframes blink-dot {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+.show {
+    display: block !important; /* Override any other display settings */
+}
+
+/* Additions for the forest items */
+.forest-items {
+    position: absolute;
+    bottom: 10px; /* Adjust this value to move items higher */
+    left: 10px;
+    z-index: 10;
+    background-color: var(--white);
+    color: var(--black);
+    padding: 4px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column; /* Ensure children (player containers) are stacked vertically */
+    max-width: 3000px; /* Adjust based on your needs */
+    overflow: auto; 
+}
+
+.forest-items .item-description {
+    color: var(--black); /* Set the color for the text */
+    margin-bottom: var(--margin-tiny); /* Space between text and items */
+    font-weight: bold;
+    font-size: 16px;
+     /* Make the text bold */
+}
+
+.forest-items .tiles {
+    display: flex; /* This will arrange your tiles in a row */
+    justify-content: flex-start; /* Align tiles to the start (left) */
+}
+
+.forest-items .tile {
+    position: relative; /*Keeps the item's position relative to its normal flow, allowing absolute positioning inside it*/
+    display: inline-block;  /*Inline-block to keep items in line*/ 
+    margin-right: 5px; /* Spacing between items*/
+    background-size: contain; /* Adjust background image to fit*/ 
+    background-repeat: no-repeat; /* No repeat of background */
+    width: 40px; /* Width of the color tile */
+    height: 40px; /* Height of the color tile */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; 
+    background-size: cover;/* Center the content vertically */
+    margin-bottom: 20px; /* If using background images *//* Center the images */
+}
+
+#tutorial-summaries-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: var(--white);
+    color: var(--black);
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column; /* Ensure children (player containers) are stacked vertically */
+    max-width: 600px; /* Set the maximum width */
+    overflow: auto; /* Add scrollbars if the content exceeds the max width or height */
+}
+
+.tutorial-player-items {
+    display: flex; /* Align label and images in a row */
+    align-items: center; /* Center items vertically within each player's row */
+    margin-bottom: 10px; /* Space between each player's row */
+}
+
+.player-items-container {
+    display: flex; /* Ensure images are laid out in a row */
+    flex-wrap: wrap; /* Allow items to wrap if too many */
+    margin-left: 10px; /* Space between the label and the images */
+}
+
+.item-with-count {
+    display: flex; /* Use flexbox to layout the count and the item side by side */
+    align-items: center; /* Align items vertically in the center */
+    margin-right: 25px; /* Spacing between each set of item + count */
+}
+
+.item-count {
+    margin-right: 5px; /* Space between the count and the item */
+    font-size: 20px; /* Larger font size for better visibility */
+    color: var(--secondary); /* Use a variable for color for easy theming */
+}
+.collected-item {
+    height:35px;
+    width:35px;
+    background-size:contain;
+    /*background-size: cover;*/
+    position: relative; /* Allows positioning the subscript absolutely within */
+}
+
+/*
+.collected-item {
+    position: relative; /*Keeps the item's position relative to its normal flow, allowing absolute positioning inside it*/
+    /*display: inline-block;  /*Inline-block to keep items in line*/ 
+    /*margin-right: 5px; /* Spacing between items*/
+    /*background-size: contain; /* Adjust background image to fit*/ 
+   /* background-repeat: no-repeat; /* No repeat of background */
+   /* width: 40px; /* Width of the color tile */
+   /* height: 40px; /* Height of the color tile */
+    /*justify-content: center; /* Center the content horizontally */
+   /* align-items: center; /* Center the content vertically */
+   /* background-size: cover; /* If using background images *//*
+}
+*/
+
+.subscript-bottom-right, .subscript-bottom-left {
+    position: absolute;
+    width: 28px;  /* Set the desired width */
+}
+
+.subscript-bottom-right {
+    margin-left: 4px;
+    right: -10px; 
+    bottom: -6px; 
+}
+
+.subscript-bottom-left {
+    margin-left: 4px;
+    left: -10px; 
+    bottom: -6px; 
+}
+
+
+
+
+
+

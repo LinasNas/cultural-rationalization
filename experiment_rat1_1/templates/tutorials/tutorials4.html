@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var currentGeneration = 4;
+
+    function startTutorial(tutorial, colors) {
+        console.log("TUTORIAL", tutorial);
+        console.log("COLORS", colors);
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        $("#steps_left, .instructions, #rule_three").hide(); // Hide steps, instructions, and third rule during the tutorial
+        tutorial = new Tutorial($(".grid-container"), tutorial, colors, function() {
+            // Once tutorial is complete, redirect to the game page
+            window.location.href = "/" + currentGeneration + "/play"; // Redirect to play_1.html after tutorials
+        }, 1000, 2000);
+    }
+
+    $(function() {
+        // Initially hide all game and tutorial elements
+        $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide();
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        // Fetch tutorial data and start the tutorial
+        $.getJSON("/api/" + currentGeneration + "/player/tutorial", data => {
+            console.log(data);
+            if (data.tutorial && data.colors) {
+                startTutorial(data.tutorial, data.colors);
+            } else {
+                // If there's no tutorial data, redirect directly to the game page
+                window.location.href = "/" + currentGeneration + "/play";
+            }
+
+            // UI stuff
+            $(".main").removeClass("loading");
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex row">
+    <div class="boiling-message">
+        Boiling
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="grinding-message">
+        Fermenting
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container", style="margin-top: 10px">
+            <b>Items Stepped On:</b>
+        </div>
+    </div>
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="tutorial_player">Previous player&nbsp;<span class="tutorial_player_data">1</span></div>
+        <!-- No turn or instructions here as it's tutorial -->
+    </div>
+</div>
+{% endblock %}
