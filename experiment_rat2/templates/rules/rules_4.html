@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var currentGeneration = 4;
+    $(function() {
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide();
+
+        function fetchAndDisplayTutorialItems(playerIds) {
+            $('#tutorial-summaries-container').empty();
+            const itemsCollectedLabel = $('<h3>Ingredients Previous People Collected:</h3>');
+            $('#tutorial-summaries-container').append(itemsCollectedLabel);
+
+            playerIds.forEach((playerId, index) => {
+                console.log(`Fetching items for player ${playerId}`);
+                $.getJSON(`/api/collected-items/${playerId}`, function(response) {
+                    const data = response.items;
+                    console.log(`Data for player ${playerId}:`, data);
+
+                    const playerContainer = $(`<div class="tutorial-player-items" id="tutorial-player-${playerId}-items"><h3>Person ${index + 1}:</h3></div>`);
+                    const itemsContainer = $('<div class="player-items-container"></div>');
+
+                    let previousColor = null;
+                    let itemCount = 0;
+
+                    data.forEach(item => {
+                        console.log('Processing item:', item);
+                        const isSpecialItem = item.color === "5" || item.color === "6";
+                        
+                        if (item.color !== previousColor) {
+                            if (previousColor !== null) {
+                                // Append the last group of items
+                                const itemElement = $(`<div class="item-with-count"></div>`);
+                                const collectedItem = $(`<div class="collected-item tile-background-${previousColor}" style="position: relative;"></div>`);
+                                
+                                const isSpecialItem = previousColor === "5" || previousColor === "6"; // Check against previousColor
+                                if (!isSpecialItem && itemCount > 1) {
+                                    itemElement.prepend(`<span class="item-count">${itemCount}x</span>`);
+                                }
+                                
+                                itemElement.append(collectedItem);
+                                itemsContainer.append(itemElement);
+                            }
+                            // Reset count and update color
+                            previousColor = item.color;
+                            itemCount = 1;
+                        } else {
+                            itemCount++;
+                        }
+                    });
+
+                    // Append the last group of items after exiting the loop
+                    if (previousColor !== null) {
+                        const itemElement = $(`<div class="item-with-count"></div>`);
+                        const collectedItem = $(`<div class="collected-item tile-background-${previousColor}" style="position: relative;"></div>`);
+                        
+                        const isSpecialItem = previousColor === "5" || previousColor === "6";
+                        if (!isSpecialItem && itemCount > 1) {
+                            itemElement.prepend(`<span class="item-count">${itemCount}x</span>`);
+                        }
+                        
+                        itemElement.append(collectedItem);
+                        itemsContainer.append(itemElement);
+                    }
+
+                    playerContainer.append(itemsContainer);
+                    $('#tutorial-summaries-container').append(playerContainer);
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error(`Failed to fetch items for player ${playerId}: ${textStatus}`, errorThrown);
+                });
+            });
+        }
+
+        $.getJSON(`/api/${currentGeneration}/player/tutorial`, function(response) {
+            const playerIds = response.tutorial.map(tut => tut.player.id);
+            fetchAndDisplayTutorialItems(playerIds);
+        });
+
+        $(document).on("click", ".submit", function() {
+            var rulesInput = $("input[name=rules]").val().trim();
+            if (rulesInput) {
+                $(".main").addClass("loading");
+                $.post("/api/guess", {
+                    rules: rulesInput
+                }).done(function(data) {
+                    location.href = "/4/rules1"; // Adjust redirection as needed
+                }).fail(function(err) {
+                    console.error("Error submitting rules guess:", err);
+                    $(".main").removeClass("loading");
+                });
+            }
+        });
+    });
+</script>  
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <div class="forest-items">
+        <div class="item-description">Here are the items in the forest:</div>
+        <div class="tiles">
+            <div class="tile tile-background-1"></div>
+            <div class="tile tile-background-2"></div>
+            <div class="tile tile-background-3"></div>
+            <div class="tile tile-background-4"></div>
+        </div>
+    </div>
+    <h2>A few questions</h2>
+    <p>We’re curious about your thinking process. Please tell us what you were thinking as you watched other players collect the ingredients for the medicine and what you were thinking as you collected them.</p>
+    <div class="flex-item stretch flex-margin-small" id="rules" contenteditable="true" placeholder="Enter your thoughts here">{% if player.rules %}{{ player.rules }}{% endif %}</div>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+    <div id="tutorial-summaries-container" class="tutorial-summaries">
+        <!-- Items fetched from API will be appended here -->
+    </div>
+</div>
+{% endblock %}
