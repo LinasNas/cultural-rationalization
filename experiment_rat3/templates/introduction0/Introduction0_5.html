@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>Introduction</h2>
+    <p> <b>Please read the following directions carefully:</b></p>
+    
+    <p>In this experiment, imagine you are a member of a community where people make a traditional and important medicine from different items they collect in a nearby forest.  The forest is named Ferngrove.
+    </p>
+
+    <p> In a moment we will put you in the forest.  You will be able to collect any items you wish, adding them to your basket.  For any item you wish to add to your basket, just walk into the square that contains that item – it will automatically be added and you will see it in your basket at the bottom of the screen.</p>
+    <p>There is also a boiling pot and a fermentation case available. <b>If you wish to use the pot or fermentation case on the items in your basket, just walk into the square that contains the pot or fermentation case. If you do that, all the items currently in your basket will be impacted by the process you utilized (the pot or fermentation case). </b>Any items collected afterwards will not be impacted, unless you step on the pot or fermentation case again.</p>
+    <p>When you are ready, there is a bottle for the medicine you have made. When you step on the square containing the bottle, all the items currently in the basket will get mixed and added to the bottle.</p>
+    <p>
+        There are four different types of items that grow in the forest. Here is what they look like:
+        </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:300px" src="{{ url_for('static', filename='graphics/mushrooms.png') }}" /> </a>
+    </div>
+    <br>
+    <p>
+        This is what the boiling pot and fermentation case look like:
+        </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:70px" src="{{ url_for('static', filename='/graphics/pot.png') }}" /> </a>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:90px" src="{{ url_for('static', filename='/graphics/grinder.png') }}" /> </a>
+    </div>
+    <p>
+        This is what the bottle looks like:
+        </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:80px" src="{{ url_for('static', filename='/graphics/med.png') }}" /> </a>
+    </div>
+    <br>
+    <br>
+    <br>
+    <a href="/5/Introduction1" class="button primary consent">Next</a>
+   
+</div>
+
+{% endblock %}
+
+
+<!--target="_blank"-->

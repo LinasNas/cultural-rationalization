@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    let names = ["optionGrindSQ0", "optionGrindSQ1", "optionGrindSQ2", "optionGrindSQ3"]
+
+    $(function () {
+        $.getJSON("/api/board/create").done(data => {
+            console.log("got data", data)
+            $.each(data.board.colors.colors, (v, k) => {
+                let colorSquare = $(`.select-square[data-id=${v}] .color-square`);
+                let overlayImage = $(`.select-square[data-id=${v}] .overlay-image`);
+
+                colorSquare.css({
+                    backgroundColor: k,
+                    width: 40,
+                    height: 40,
+                    position: 'relative'
+                })
+
+                overlayImage.addClass(`tile-background-${v}`).css({
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: '50px',
+                    height: '45px',
+                    zIndex: 2
+                })
+            })
+        })
+    })
+
+    $(document).on("click", ".submit", function () {
+        var counter = 0
+        names.forEach(name => {
+            if ($(`input[name=${name}]:checked`).val() == undefined) {
+                counter += 1
+            }
+        })
+
+        if (counter > 0) {
+            alert("Please fill out all questions!")
+            return
+        }
+
+        $(".main").addClass("loading")
+        $.post("/api/guess/22", {
+            optionGrindSQ0: $(`input[name=optionGrindSQ0]:checked`).val(),
+            optionGrindSQ1: $(`input[name=optionGrindSQ1]:checked`).val(),
+            optionGrindSQ2: $(`input[name=optionGrindSQ2]:checked`).val(),
+            optionGrindSQ3: $(`input[name=optionGrindSQ3]:checked`).val()
+        }).done(data => {
+            location.href = "/7/rules3"
+        }).fail(err => {
+            console.error(err)
+        }).always(() => {
+            $(".main").removeClass("loading")
+        })
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>A few questions</h2>
+    <p>Some item(s) were supposed to be <b>grinded</b> while others were not. For each item please indicate as best as you can whether you think it should be grinded for the medicine:</p>
+    <br>
+    <form class="flex column">
+        {% set labels = ["Yes", "No"] %}
+
+        {% for i in range(4) %}
+        <div class="select-square flex column center mobile-column flex-item flex-margin-small" data-id="{{ i + 1}}">
+            <div class="color-square" data-image="/static/graphics/m{{ i + 1}}.png">
+                <img class="overlay-image"/>
+            </div>
+            <div class="container flex-item flex-margin-tiny">
+                {% for label in labels %}
+                <label class="radio-inline">
+                    <input type="radio" name="optionGrindSQ{{ i }}" value="{{ label }}">{{ label }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </form>
+    <br>
+    <br>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+</div>
+{% endblock %}
+
