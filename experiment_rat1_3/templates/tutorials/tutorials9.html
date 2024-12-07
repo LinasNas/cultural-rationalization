@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var currentGeneration = 9;
+
+    function startTutorial(tutorials, colors) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerNames = [
+            urlParams.get('player1'),
+            urlParams.get('player2'),
+            urlParams.get('player3')
+        ];
+
+        $(".boiling-message").addClass('hidden');
+        $("#steps_left, .instructions, #rule_three").hide(); // Hide elements during the tutorial
+
+        let currentTutorialIndex = 0;
+
+        function loadNextTutorial() {
+            if (currentTutorialIndex < tutorials.length) {
+                // Update the player name dynamically
+                $(".player_name").text(playerNames[currentTutorialIndex % playerNames.length]);
+
+                // Start the current tutorial
+                const tutorialInstance = new Tutorial(
+                    $(".grid-container"),
+                    [tutorials[currentTutorialIndex]],
+                    colors,
+                    () => {
+                        console.log(`DEBUG - Completed tutorial for ${playerNames[currentTutorialIndex % playerNames.length]}`);
+                        currentTutorialIndex++;
+                        loadNextTutorial();
+                    },
+                    1000,
+                    2000
+                );
+            } else {
+                console.log('DEBUG - All tutorials completed');
+                const urlParams = new URLSearchParams(window.location.search);
+                const playerNamesQuery = `player1=${urlParams.get('player1')}&player2=${urlParams.get('player2')}&player3=${urlParams.get('player3')}`;
+                window.location.href = `/${currentGeneration}/play?${playerNamesQuery}`;
+            }
+        }
+
+        // Start the first tutorial
+        loadNextTutorial();
+    }
+
+    $(function() {
+        console.log('DEBUG - Initial URL:', window.location.search);
+
+        // Only hide specific elements
+        $(".your_turn, .instructions-container, .rewatch_players").hide();
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+
+        // Fetch tutorial data and start the tutorial
+        $.getJSON("/api/" + currentGeneration + "/player/tutorial", data => {
+            console.log('DEBUG - Tutorial Data:', data);
+            if (data.tutorial && data.colors) {
+                startTutorial(data.tutorial, data.colors);
+            } else {
+                const urlParams = new URLSearchParams(window.location.search);
+                const playerNamesQuery = `player1=${urlParams.get('player1')}&player2=${urlParams.get('player2')}&player3=${urlParams.get('player3')}`;
+                window.location.href = `/${currentGeneration}/play?${playerNamesQuery}`;
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex row">
+    <div class="boiling-message">
+        Boiling
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="grinding-message">
+        Fermenting
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container" style="margin-top: 10px">
+            <b>Items Stepped On:</b>
+        </div>
+    </div>
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="tutorial_player"><span class="player_name"></span></div>
+        <!-- No turn or instructions here as it's tutorial -->
+    </div>
+</div>
+{% endblock %}

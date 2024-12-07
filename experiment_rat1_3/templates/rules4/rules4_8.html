@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        let responses = {};
+
+        // Collect responses for each question
+        $("input[type=radio]:checked").each(function() {
+            let id = $(this).attr("name");
+            let value = $(this).val();
+            responses[id] = value;
+        });
+
+        // Add feedback to responses, ensuring it's always included
+        responses.feedback = $("#feedback").val().trim() || "null";
+
+        // Check if all required questions have been answered
+        if (responses["points_choice"] && responses["name_choice"] && responses["players_choice"]) {
+            $(".main").addClass("loading");
+            $.post("/api/endCheck", responses)
+                .done(data => {
+                    location.href = "/8/finish";
+                })
+                .fail(err => {
+                    console.error("Error occurred:", err.responseText);
+                    alert("An error occurred. Please try again.");
+                })
+                .always(() => {
+                    $(".main").removeClass("loading");
+                });
+        } else {
+            alert("Please answer all questions before proceeding.");
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column" style="align-items: center; text-align: center; padding: 20px;">
+    <h2>Please answer the following questions:</h2>
+    <div class="question-container" style="margin-top: 10px; text-align: left; width: 80%; max-width: 600px;">
+        <p><b>Who chose which ingredients were good and earned points, and which ingredients were bad and lost points?</b></p>
+        <div class="radio-group" style="display: flex; gap: 20px;">
+            <label><input type="radio" name="points_choice" value="you"> The experimenter chose them</label>
+            <label><input type="radio" name="points_choice" value="I"> I chose them</label>
+        </div>
+    
+        <p><b>How was your avatar's name chosen?</b></p>
+        <div class="radio-group" style="display: flex; gap: 20px;">
+            <label><input type="radio" name="name_choice" value="you"> The experimenter chose it</label>
+            <label><input type="radio" name="name_choice" value="I"> I chose it</label>
+        </div>
+    
+        <p><b>Who determined which previous players you viewed?</b></p>
+        <div class="radio-group" style="display: flex; gap: 20px;">
+            <label><input type="radio" name="players_choice" value="you"> The experimenter chose them</label>
+            <label><input type="radio" name="players_choice" value="I"> I chose them</label>
+        </div>
+    
+        <p><b>If you'd like to share anything else about the task or your experience taking it please do so below:</b></p>
+        <textarea id="feedback" style="width: 100%; min-height: 100px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Enter your feedback here (optional)"></textarea>
+    </div>
+
+    <a class="button primary flex-item flex-margin-small submit">Continue</a>
+</div>
+
+<style>
+.question-container {
+    padding: 20px;
+}
+
+.radio-group {
+    margin: 10px 0 20px 20px;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+</style>
+{% endblock %}

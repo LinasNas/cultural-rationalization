@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+        $(document).on("click", ".submit", function () {
+        if ($("#avatar-name").val().trim()) {
+            $(".main").addClass("loading");
+            location.href = "/3/Introduction1";
+        } else {
+            alert("Please give your avatar a name before continuing!");
+            return false;
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>Introduction</h2>
+    <p> <b>Please read the following directions carefully:</b></p>
+    
+    <p>In this experiment, imagine you are a member of a community where people make a traditional dish from different items they collect in a nearby forest.  The forest is named Ferngrove.
+    </p>
+
+    <p>In a moment we will put you in the forest. You’ll move around, and by moving on top of items you can put them into your basket.</p>    
+    <p>Once items are in your basket, if you wish, you can boil them by moving on top of the boiling pot, or ferment them by moving on top of the fermentation case.  It’s up to you.  Only items in your basket are boiled or fermented.  If you wish, you can add more items and repeat either process.</p>
+    <p>When you are ready, there is a bowl for the traditional dish you have made. When you step on the square containing the bowl, all the items currently in the basket will get mixed and added to the bowl.</p>
+    <p>
+        There are four different types of items that grow in the forest. Here is what they look like:
+        </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:200px" src="{{ url_for('static', filename='graphics/mushrooms.png') }}" /> </a>
+    </div>
+    <br>
+    <p>
+        This is what the boiling pot, fermentation case, and bowl look like:
+        </p>
+    <br>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:50px" src="{{ url_for('static', filename='/graphics/pot.png') }}" /> </a>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:70px" src="{{ url_for('static', filename='/graphics/grinder.png') }}" /> </a>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:60px" src="{{ url_for('static', filename='/graphics/med.png') }}" /> </a>
+    </div>
+    <br>
+    <p>This is what your avatar looks like. Please give your avatar a name (not your real name).</p>
+    <div class="image-and-circle" display:inline>
+        <a href="Berries and Nuts"> <img class="game-image" style= "width:60px" src="{{ url_for('static', filename='/graphics/pla.png') }}" /> </a>
+    </div>
+    <p><b>Name:</b><input type="text" id="avatar-name" style="width: 100px; padding: 5px; margin-left: 5px;"></p>
+    <a class="button primary flex-item flex-margin-small submit">Next</a>
+   
+</div>
+
+{% endblock %}
+
+
+<!--target="_blank"-->
