@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    // Object to hold radio responses
+    let responses = {
+        radio1: null
+    };
+
+    // Handle radio input changes
+    $(document).on('change', 'input[type=radio]', function () {
+        const radioName = $(this).attr('name');
+        responses[radioName] = $(this).val(); // Store the value in the responses object
+        console.log(`Radio ${radioName} value: ${responses[radioName]}`); // Log the value
+    });
+
+    $(document).on("click", ".submit", function () {
+        // Check if both radios have been interacted with
+        if (responses.radio1 !== null) {
+            $(".main").addClass("loading");
+
+            $.post("/api/guess/22", responses)
+                .done(data => {
+                    // Redirect to the next page
+                    location.href = "/0/rules3";
+                })
+                .fail(err => {
+                    console.error("Error occurred:", err.responseText); // Log error details
+                    alert("An error occurred. Please try again."); // User feedback
+                });
+        } else {
+            // Show an alert if not all radios have been interacted with
+            alert("Please answer all questions before proceeding.");
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>A few questions</h2>
+    <p>Back when you were watching the other participants, which statement is closer to what you were thinking?</p>
+    <div class="flex column center">
+        
+        <!-- Radio Question 1 -->
+        <div class="radio-wrapper" style="text-align: center;">
+            <div class="radio-container">
+                <br>
+                <div style="display: flex; justify-content: center; gap: 20px;">
+                    <label>
+                        <input type="radio" name="radio1" value="intelligent">
+                        These players know something useful about the right way to make the dish, and I can learn from them
+                    </label>
+                    <label>
+                        <input type="radio" name="radio1" value="not_intelligent">
+                        These players do not know anything useful about the right way to make the dish, and I can’t really learn from them
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    <br>
+    <br>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+</div>
+{% endblock %}

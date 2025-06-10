@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=textContinuityImportance]").val().trim()) {
+            // save textContinuityImportance guess to database
+            $(".main").addClass("loading")
+            $.post("/api/textContinuityImportance", {
+                textContinuityImportance: $("input[name=textContinuityImportance]").val().trim()
+            }).done(data => {
+                // redirect to rules1
+                location.href = "/0/rules2"
+            }).fail(err => {
+                console.error(err)
+            })
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <div class="forest-items">
+        <div class="item-description">Here are the items in the forest:</div>
+        <div class="tiles">
+            <div class="tile tile-background-1"></div>
+            <div class="tile tile-background-2"></div>
+            <div class="tile tile-background-3"></div>
+            <div class="tile tile-background-4"></div>
+            <div class="tile tile-background-5"></div>
+            <div class="tile tile-background-6"></div>
+        </div>
+    </div>
+    <h2>A few questions</h2>
+    <p>As a reminder, displayed at the bottom of the page, are the plants in the forest and the processes that were available to you.</p>
+    <p>Do you think that any of the specific ingredients are important to add? Why? Are there ones that it is important to avoid? Why? Do you think the processes of boiling and/or fermenting are important too? Why?</p>
+    <div class="flex-item stretch flex-margin-small" id="textContinuityImportance" contenteditable="true" placeholder="Enter your thoughts here" style="height: 150px;">{% if player.textContinuityImportance %}{{ player.textContinuityImportance }}{% endif %}</div>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+</div>
+{% endblock %}

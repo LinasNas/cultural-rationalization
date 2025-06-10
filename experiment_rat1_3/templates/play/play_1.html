@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var currentGeneration = 1;
+    $(function() {
+    $(".boiling-message").addClass('hidden');
+    $(".grinding-message").addClass('hidden');
+    $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide();
+
+    function fetchAndDisplayTutorialItems(playerIds) {
+    $('#tutorial-summaries-container').empty();
+    const itemsCollectedLabel = $('<h3>Plants Previous People Collected:</h3>');
+    $('#tutorial-summaries-container').append(itemsCollectedLabel);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerNames = [
+        urlParams.get('player1'),
+        urlParams.get('player2'),
+        urlParams.get('player3')
+    ];
+
+    // Store player names globally for use in redirection
+    window.playerNames = playerNames;
+
+    playerIds.forEach((playerId, index) => {
+        console.log(`Fetching items for player ${playerId}`);
+        $.getJSON(`/api/collected-items/${playerId}`, function(response) {
+            const data = response.items;
+            console.log(`Data for player ${playerId}:`, data);
+
+            const playerContainer = $(`<div class="tutorial-player-items" id="tutorial-player-${playerId}-items"><h3>${playerNames[index]}:</h3></div>`);
+            const itemsContainer = $('<div class="player-items-container"></div>');
+
+            let previousColor = null;
+            let itemCount = 0;
+
+            data.forEach(item => {
+                console.log('Processing item:', item);
+                const isSpecialItem = item.color === "5" || item.color === "6";
+                
+                if (item.color !== previousColor) {
+                    if (previousColor !== null) {
+        // Append the last group of items
+                    const itemElement = $(`<div class="item-with-count"></div>`);
+                    const collectedItem = $(`<div class="collected-item tile-background-${previousColor}" style="position: relative;"></div>`);
+        
+                    const isSpecialItem = previousColor === "5" || previousColor === "6"; // Check against previousColor
+                    if (!isSpecialItem && itemCount > 1) {
+                        itemElement.prepend(`<span class="item-count">${itemCount}x</span>`);
+                    }
+        
+                    itemElement.append(collectedItem);
+                    itemsContainer.append(itemElement);
+                    }
+    // Reset count and update color
+                    previousColor = item.color;
+                    itemCount = 1;
+                } else {
+                    itemCount++;
+                }
+
+            });
+
+            // Append the last group of items after exiting the loop
+            if (previousColor !== null) {
+                const itemElement = $(`<div class="item-with-count"></div>`);
+                const collectedItem = $(`<div class="collected-item tile-background-${previousColor}" style="position: relative;"></div>`);
+    
+                const isSpecialItem = previousColor === "5" || previousColor === "6";
+                if (!isSpecialItem && itemCount > 1) {
+                    itemElement.prepend(`<span class="item-count">${itemCount}x</span>`);
+                }
+    
+                itemElement.append(collectedItem);
+                itemsContainer.append(itemElement);
+            }
+
+            playerContainer.append(itemsContainer);
+            $('#tutorial-summaries-container').append(playerContainer);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            console.error(`Failed to fetch items for player ${playerId}: ${textStatus}`, errorThrown);
+        });
+    });
+}
+
+
+        $.getJSON("/api/player", data => {
+            console.log('Player data:', data); 
+            $(".your_turn, .instructions-container").show();
+            $("#steps_left, .instructions").show();
+            game = new Game(data.player.number_of_moves, $(".grid-container"));
+            $(".main").removeClass("loading");
+
+            $.getJSON(`/api/${currentGeneration}/player/tutorial`, function(response) {
+                console.log('Tutorial response:', response);
+                const playerIds = response.tutorial.map(tut => tut.player.id);
+                fetchAndDisplayTutorialItems(playerIds);
+            });
+        }).fail(function() {
+            console.error("Failed to fetch player data.");
+        });
+    });
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="main flex row">
+    <div class="boiling-message">
+        Boiling
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="main flex row">
+        <div class="grinding-message">
+            Fermenting
+            <span class="dots">
+                <span class="dot">.</span>
+                <span class="dot">.</span>
+                <span class="dot">.</span>
+            </span>
+        </div>
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container" style="margin-top: 10px">
+            <b>Items Stepped On:</b>
+        </div>
+    </div>
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="your_turn" style="margin-bottom: 0;">Your turn</div>
+        <br>
+        <div style="text-align: center;">
+            <div class="instructions" style="text-align: left;">
+                <ol>
+                    <p><b>Please read the following instructions carefully before continuing:</b></p>
+                    <li>Use your arrow keys to navigate through the grid. The only restriction on your movement is that you can't move outside of the grid.</li>
+                    <br>
+                    <li>When you are finished moving, step on the bowl to move to the next page.</li>
+                    <br>
+                    <!--<li id="rule_three">If you wish to rewatch the previous players you were shown, click the button below.</li>-->
+                </ol>
+            </div>
+            <br>
+            <a href="/1/tutorials" class="button primary rewatch_players" style="margin-bottom: 20px;">Rewatch Players</a>
+        </div>
+        <div id="tutorial-summaries-container" class="tutorial-summaries">
+            <!-- Items fetched from API will be appended here -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
