@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=process]:checked").val()) {  // Updated to check if a radio button is checked
+            $(".main").addClass("loading")
+            $.post("/api/guess/21", {
+                process: $(`input[name=process]:checked`).val()
+            }).done(data => {
+                location.href = "/5/rules22"
+            }).fail(err => {
+                console.error(err)
+            }).always(() => {
+                $(".main").removeClass("loading")
+            })
+        } else {
+            alert("Please select an option!")
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column" style="align-items: center; text-align: center; padding: 20px;">
+    <h2>A few questions</h2>
+    <p>Which process did you think you should do first?</p>
+    <br>
+    <br>
+    <form class="flex row center" style="justify-content: center; gap: 8px;">
+        <div class="radio flex column center">
+            <label style="font-size: 16px;">
+                <input type="radio" name="process" value="pot">
+                Use the pot
+            </label>
+        </div>
+        <div class="radio flex column center">
+            <label style="font-size: 16px;">
+                <input type="radio" name="process" value="ferment">
+                Use the fermentation case
+            </label>
+        </div>
+    </form>
+    <br>
+    <br>
+    <a class="button primary flex-item flex-margin-small submit" style="margin-top: 20px;">Submit response</a>
+</div>
+{% endblock %}

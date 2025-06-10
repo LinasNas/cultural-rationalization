@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var currentGeneration = 5;
+    $(function() {
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide();
+
+        $(document).on("click", ".submit", function() {
+            var pipedTextInput = $("input[name=PipedText]").val().trim();
+            if (pipedTextInput) {
+                $(".main").addClass("loading");
+                $.post("/api/PipedTextGuess", {
+                    PipedText: pipedTextInput
+                }).done(function(data) {
+                    location.href = "/5/rules"; // Adjust redirection as needed
+                }).fail(function(err) {
+                    console.error("Error submitting rules guess:", err);
+                    $(".main").removeClass("loading");
+                });
+            }
+        });
+    });
+</script>  
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <div class="forest-items">
+        <div class="item-description">Here are the items in the forest:</div>
+        <div class="tiles">
+            <div class="tile tile-background-1"></div>
+            <div class="tile tile-background-2"></div>
+            <div class="tile tile-background-3"></div>
+            <div class="tile tile-background-4"></div>
+            <div class="tile tile-background-5"></div>
+            <div class="tile tile-background-6"></div>
+        </div>
+    </div>
+    <h2>A few questions</h2>
+    <p>We may show future participants what you did and allow them to see a message from you. Please write a message that may be useful for them below.</p>    
+    <div class="flex-item stretch flex-margin-small" id="PipedText" contenteditable="true" placeholder="Enter your thoughts here" style="height: 150px;">{% if player.PipedText %}{{ player.PipedText }}{% endif %}</div>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+    <div id="tutorial-summaries-container" class="tutorial-summaries">
+        <!-- Items fetched from API will be appended here -->
+    </div>
+</div>
+{% endblock %}

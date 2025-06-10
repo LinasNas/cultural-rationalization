@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var currentGeneration = 6;
+
+    $(function() {
+        // create new player
+        $.getJSON("/api/player/create", data => {
+            player = data.player
+            
+            // UI stuff
+            $(".consent").removeClass("deactivated")
+            $(".main").removeClass("loading")
+
+            const workerId = localStorage.getItem('workerId');
+
+            $(".consent").click(function () {
+                $(".main").addClass("loading")
+                
+                // OLD
+                // $.getJSON("/api/player/consent", data => {
+                // NEW
+                $.getJSON("/api/" + currentGeneration + "/player/consent",{ workerId: workerId }, data => {
+
+                    if (data.success) {
+                        // successfully captured consent, redirect
+                        location.href = "/6/Introduction0"
+                    } else {
+                        alert("unknown error")
+                    }
+                })
+            })
+        })
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column loading">
+    <h2>Study Consent</h2>
+    <p><b> Please consider this information carefully before deciding whether to participate in this research.</b></p>
+    <p>This is a psychological study. It will take approximately 13 minutes to complete, and you will receive $3.25 as compensation for completing the study. After you complete the study you will have an opportunity to learn more about it. </p>
+    <p>
+    There are no anticipated risks associated with participating in this study. The effects of participating should be comparable to those you would ordinarily experience from viewing a computer monitor and using a mouse or keyboard for a similar amount of time.
+    At the end of the study, we will provide an explanation of the questions that motivate this line of research and will describe the potential implications.
+    </p>
+    <p>
+    Your participation in this study is completely voluntary and you may refuse to participate or you may choose to withdraw at any time without penalty or loss of benefits to which you are otherwise entitled.
+    Your participation in this study will remain confidential. No personally identifiable information will be associated with your data. Also, all analyses of the data will be averaged across all the participants, so your individual responses will never be specifically analyzed.
+    If you want to request a summary of research findings, or have questions or concerns about your participation or payment, or have any other problems related to this study, please contact the faculty member supervising this work: Fiery Cushman, cushman@fas.harvard.edu.
+    For questions, concerns, suggestions, or complaints that have not been or cannot be addressed by the researcher, or to report research-related harm, please contact the Committee on the Use of Human Subjects in Research at Harvard University.
+    Phone: 617-496-2847. Email: cuhs@fas.harvard.edu
+    Please print or save a copy of this form for your records.
+    </p>
+    <p>
+    Agreement:
+    The nature and purpose of this research have been sufficiently explained and I agree to participate in this study. I understand that I am free to withdraw at any time without incurring any penalty.
+    Please consent by clicking the "I consent" button below and proceed to taking the survey. Otherwise, please exit the study at this time.
+    </p>
+    <p>
+         
+    </p>
+    <div display: inline>
+        <a href="/6/terminate" class="button primary">I don't wish to continue</a>
+        <a class="button primary consent deactivated">I agree</a> 
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var currentGeneration = 0;  // Variable for player's generation
+
+    function startGame() {
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        $(".tutorial_player").hide()
+        $(".your_turn, .instructions-container").show()
+        $("#steps_left, .instructions").show() // Show steps and instructions
+
+        $(".rewatch_players").hide();  // Hide the rewatch button if not in tutorial
+        game = new Game(player.number_of_moves, $(".grid-container"))
+    }
+    
+    $(function() {
+        $(".boiling-message").addClass('hidden');
+        $(".grinding-message").addClass('hidden');
+        $(".tutorial_player, .your_turn, .instructions-container, .rewatch_players").hide()  // Initially hide some elements
+
+        // Get current player
+        $.getJSON("/api/player", data => {
+            player = data.player
+            console.log(player)
+            
+            startGame()  // Start the game immediately for player navigation
+
+            $(".main").removeClass("loading")
+        })
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex row">
+    <div class="boiling-message">
+        Boiling
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+    <div class="grinding-message">
+        Fermenting
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container" style="margin-top: 10px">
+            <b>Items Stepped On:</b>
+        </div>
+    </div>
+
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="your_turn" style="margin-bottom: 0;">Your turn!</div>
+        <br>
+        <div style="text-align: center;">
+            <div class="instructions" style="text-align: left;">
+                <ol>
+                    <p><b>Please read the following instructions carefully before continuing:</b></p>
+                    <li>Use your arrow keys to navigate through the grid. The only restriction on your movement is that you can't move outside of the grid.</li>
+                    <br>
+                    <li>When you are finished moving, step on the bowl to move to the next page.</li>
+                    <br>
+                </ol>
+            </div>
+            <br>
+            <br>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+

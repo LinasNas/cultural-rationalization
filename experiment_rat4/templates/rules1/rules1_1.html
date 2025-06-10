@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        let responses = {};
+
+        // Collect responses for each question
+        $("input[type=radio]:checked").each(function() {
+            let name = $(this).attr("name");
+            let value = $(this).val();
+            responses[name] = value;
+        });
+
+        // Check if both questions have been answered
+        if (responses["valuesYN"] && responses["processYN"]) {
+            // Save responses to the database
+            $(".main").addClass("loading");
+            $.post("/api/guess/1", responses)
+                .done(data => {
+                    // Redirect to the next page
+                    location.href = "/1/rules2";
+                })
+                .fail(err => {
+                    console.error(err);
+                });
+        } else {
+            // Show an alert if not all options are selected
+            alert("Please answer all questions before proceeding.");
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <h2>A few questions</h2>
+    <p>As you collected the items, did you think that certain ones would be better for the traditional dish than others?</p>
+    <form class="flex column">
+        <div>
+            <input type="radio" name="valuesYN" value="Yes">Yes
+            <input type="radio" name="valuesYN" value="No">No
+        </div>
+    </form>
+    <br>
+    <br>
+    <p>Did you think that you should use the pot and fermentation case in a specific order?</p>
+    <form class="flex column">
+        <div>
+            <input type="radio" name="processYN" value="Yes">Yes
+            <input type="radio" name="processYN" value="No">No
+        </div>
+    </form>
+    <a class="button primary flex-item flex-margin-small submit">Continue</a>
+</div>
+{% endblock %}

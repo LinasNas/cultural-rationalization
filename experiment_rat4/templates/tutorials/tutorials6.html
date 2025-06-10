@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    var currentGeneration = 6;
+
+    function showOnlyMessage(type) {
+        console.log("DEBUG - showOnlyMessage called with type:", type);
+
+        const isBoiling = type === 'boiling';
+        const isGrinding = type === 'grinding';
+
+        $(".grid-container, #player-info-column, #stepped-images-container, .your_turn, .instructions-container, .rewatch_players, .word-responses-container").addClass('hidden');
+        $("#player-info-column").css("display", "none");
+        $(".word-responses-container").css("display", "none");
+        $(".boiling-message, .grinding-message").addClass('hidden');
+
+        if (isBoiling) {
+            $(".boiling-message").removeClass('hidden').css("display", "block");
+        } else if (isGrinding) {
+            $(".grinding-message").removeClass('hidden').css("display", "block");
+        }
+    }
+    function displayWordResponse(responseText) {
+            if (!$(".boiling-message").is(":visible") && !$(".grinding-message").is(":visible")) {
+                const container = $(".word-responses-container").empty();
+                const commentElement = $('<div class="comment-label"><b> Their understanding of the environment:</b><br></div>');
+                const responseElement = $('<div class="word-response"></div>').text(responseText);
+                container.append(commentElement).append(responseElement);
+                container.css("display", "block").removeClass('hidden');
+                $("#player-info-column").css("display", "block").removeClass('hidden');
+            }
+        }
+    function startTutorial(tutorials, colors, wordResponses) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerNames = [
+            urlParams.get('player1'),
+            urlParams.get('player2'),
+            urlParams.get('player3')
+        ];
+
+        $(".boiling-message, .grinding-message").addClass('hidden');
+        $("#steps_left, .instructions, #rule_three").hide();
+
+        let currentTutorialIndex = 0;
+
+        function displayWordResponse(responseText) {
+            if (!$(".boiling-message").is(":visible") && !$(".grinding-message").is(":visible")) {
+                const container = $(".word-responses-container").empty();
+                const commentElement = $('<div class="comment-label"><b> Their understanding of the environment:</b><br></div>');
+                const responseElement = $('<div class="word-response"></div>').text(responseText);
+                container.append(commentElement).append(responseElement);
+                container.css("display", "block").removeClass('hidden');
+                $("#player-info-column").css("display", "block").removeClass('hidden');
+            }
+        }
+
+        function loadNextTutorial() {
+            if (currentTutorialIndex < tutorials.length) {
+                const playerIndex = currentTutorialIndex % playerNames.length;
+                const tutorial = tutorials[currentTutorialIndex];
+                const tutorialType = tutorial.type?.toLowerCase();
+
+                if (tutorialType === 'boiling') {
+                    showOnlyMessage('boiling');
+                } else if (tutorialType === 'grinding') {
+                    showOnlyMessage('grinding');
+                } else {
+                    $(".grid-container, #player-info-column, #stepped-images-container").removeClass('hidden');
+                    $(".grid-container").css("display", "block");
+                    $("#player-info-column").css("display", "block");
+                    $("#stepped-images-container").css("display", "block");
+                    $(".boiling-message, .grinding-message").addClass('hidden').css("display", "none");
+
+                    $(".player_name").text(playerNames[playerIndex]);
+                    const ruleText = tutorial.rules || 'No rule text available';
+                    displayWordResponse(ruleText);
+                }
+
+                function startTutorialInstance() {
+                    const tutorialInstance = new Tutorial(
+                        $(".grid-container"),
+                        [tutorial],
+                        colors,
+                        () => {
+                            if (!tutorial.type || (tutorial.type.toLowerCase() !== 'boiling' && tutorial.type.toLowerCase() !== 'grinding')) {
+                                $(".boiling-message, .grinding-message").addClass('hidden').css("display", "none");
+                                $(".grid-container, #player-info-column, #stepped-images-container").removeClass('hidden');
+                                $(".grid-container").css("display", "block");
+                                $("#player-info-column").css("display", "block");
+                                $("#stepped-images-container").css("display", "block");
+                            } else {
+                                // Delay restoring visibility after boiling/grinding
+                                setTimeout(() => {
+                                    $(".boiling-message, .grinding-message").addClass('hidden').css("display", "none");
+                                    $(".grid-container, #player-info-column, #stepped-images-container").removeClass('hidden');
+                                    $(".grid-container, #stepped-images-container").css("display", "block");
+                                    $("#player-info-column").css("display", "block").removeClass('hidden');
+                                    $(".word-responses-container").css("display", "block").removeClass('hidden');
+                                }, 2000);
+                            }
+
+                            currentTutorialIndex++;
+                            loadNextTutorial();
+                        },
+                        1000,
+                        2000
+                    );
+                }
+
+                setTimeout(() => {
+                    startTutorialInstance();
+                }, 8000); // 1000ms = 1 second delay
+
+            } else {
+                const playerNamesQuery = `player1=${urlParams.get('player1')}&player2=${urlParams.get('player2')}&player3=${urlParams.get('player3')}`;
+                window.location.href = `/${currentGeneration}/play?${playerNamesQuery}`;
+            }
+        }
+
+        loadNextTutorial();
+    }
+
+    $(function() {
+        $(".your_turn, .instructions-container, .rewatch_players, .word-responses-container").hide();
+        $(".boiling-message, .grinding-message").addClass('hidden');
+
+        $(document).ready(function() {
+            window.originalShowBoiling = window.showBoiling || function() {};
+            window.originalShowGrinding = window.showGrinding || function() {};
+
+            window.showBoiling = function() {
+                $("#player-info-column").addClass('hidden').css("display", "none");
+                $(".word-responses-container").addClass('hidden').css("display", "none");
+
+                if (typeof window.originalShowBoiling === 'function') {
+                    window.originalShowBoiling.apply(this, arguments);
+                }
+
+                setTimeout(function() {
+                    $("#player-info-column").addClass('hidden').css("display", "none");
+                    $(".word-responses-container").addClass('hidden').css("display", "none");
+                }, 50);
+            };
+
+            window.showGrinding = function() {
+                $("#player-info-column").addClass('hidden').css("display", "none");
+                $(".word-responses-container").addClass('hidden').css("display", "none");
+
+                if (typeof window.originalShowGrinding === 'function') {
+                    window.originalShowGrinding.apply(this, arguments);
+                }
+
+                setTimeout(function() {
+                    $("#player-info-column").addClass('hidden').css("display", "none");
+                    $(".word-responses-container").addClass('hidden').css("display", "none");
+                }, 50);
+            };
+
+            setInterval(function() {
+                const isBoilingVisible = $(".boiling-message").is(":visible");
+                const isGrindingVisible = $(".grinding-message").is(":visible");
+
+                if (isBoilingVisible || isGrindingVisible) {
+                    $("#player-info-column").addClass('hidden').css("display", "none");
+                    $(".word-responses-container").addClass('hidden').css("display", "none");
+                    $(".player_name").addClass('hidden').css("display", "none");
+                } else {
+                    $("#player-info-column").removeClass('hidden').css("display", "block");
+                    $(".word-responses-container").removeClass('hidden').css("display", "block");
+                    $(".player_name").removeClass('hidden').css("display", "block");
+                }
+            }, 10);
+
+        });
+
+        $.getJSON("/api/" + currentGeneration + "/player/tutorial", data => {
+            if (data.tutorial && data.colors) {
+                const responses = data.word_responses || [];
+                startTutorial(data.tutorial, data.colors, responses);
+            } else {
+                const urlParams = new URLSearchParams(window.location.search);
+                const playerNamesQuery = `player1=${urlParams.get('player1')}&player2=${urlParams.get('player2')}&player3=${urlParams.get('player3')}`;
+                window.location.href = `/${currentGeneration}/play?${playerNamesQuery}`;
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex row">
+    <!-- Boiling message -->
+    <div class="boiling-message hidden">
+        Boiling
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+
+    <!-- Grinding message -->
+    <div class="grinding-message hidden">
+        Fermenting
+        <span class="dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+        </span>
+    </div>
+
+    <!-- Main grid and player info -->
+    <div class="flex-container">
+        <div class="grid-container flex-item grow"></div>
+        <div id="stepped-images-container" style="margin-top: 10px">
+        </div>
+    </div>
+    <div class="flex-item grow flex-margin-small flex column center">
+        <div class="player_name" style="font-weight: bold; font-size: 1.8em; color: var(--secondary); margin-bottom: 10px;"></div>
+        <div class="word-responses-container" style="background-color: white; width: 300px; height: auto; color: var(--secondary); margin-top: 10px; font-size: 1.1em;"></div>
+    </div> 
+</div>
+{% endblock %}

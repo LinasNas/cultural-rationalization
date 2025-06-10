@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        if ($("input[name=PipedText]").val().trim()) {
+            // save PipedText to database
+            $(".main").addClass("loading")
+            $.post("/api/PipedTextGuess", {
+                PipedText: $("input[name=PipedText]").val().trim()
+            }).done(data => {
+                // redirect to rules1
+                location.href = "/0/rules"
+            }).fail(err => {
+                console.error(err)
+            })
+        }
+    })
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column">
+    <div class="forest-items">
+        <div class="item-description">Here are the items in the forest:</div>
+        <div class="tiles">
+            <div class="tile tile-background-1"></div>
+            <div class="tile tile-background-2"></div>
+            <div class="tile tile-background-3"></div>
+            <div class="tile tile-background-4"></div>
+            <div class="tile tile-background-5"></div>
+            <div class="tile tile-background-6"></div>
+        </div>
+    </div>
+    <h2>A few questions</h2>
+    <p>We may show future participants what you did and allow them to see a message from you. Please write a message that may be useful for them below. </p>  
+    <div class="flex-item stretch flex-margin-small" id="PipedText" contenteditable="true" placeholder="Enter the name here" style="height: 150px;">{% if player.PipedText %}{{ player.PipedText }}{% endif %}</div>
+    <a class="button primary flex-item flex-margin-small submit">Submit response</a>
+</div>
+{% endblock %}

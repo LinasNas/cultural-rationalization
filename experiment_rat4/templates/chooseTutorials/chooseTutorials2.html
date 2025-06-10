@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).on("click", ".submit", function () {
+        const player1 = $("#player1-select").val();
+        const player2 = $("#player2-select").val();
+        const player3 = $("#player3-select").val();
+        
+        if (!player1 || !player2 || !player3) {
+            alert("Please select a name for each player!");
+            return false;
+        }
+        
+        const selections = [player1, player2, player3];
+        const uniqueSelections = new Set(selections);
+        if (uniqueSelections.size !== 3) {
+            alert("Please select different names for each player!");
+            return false;
+        }
+
+        $(".main").addClass("loading");
+        location.href = `/2/tutorials?player1=${player1}&player2=${player2}&player3=${player3}&tutorialIndex=0`;
+    });
+
+    $(".player-select").on("change", function() {
+        updateAvailableOptions();
+    });
+
+    function updateAvailableOptions() {
+        const selectedValues = [];
+        $(".player-select").each(function() {
+            if ($(this).val()) {
+                selectedValues.push($(this).val());
+            }
+        });
+
+        $(".player-select option").prop("disabled", false);
+        selectedValues.forEach(value => {
+            $(".player-select option[value='" + value + "']").each(function() {
+                if (!$(this).is(":selected")) {
+                    $(this).prop("disabled", true);
+                }
+            });
+        });
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="main flex column" style="align-items: center; text-align: center; padding: 20px;">
+    <h2>Introduction</h2>
+    <p>You can choose to view any 3 players among the 10 who most recently completed this task.  Their avatar names are listed.  Please choose the players you would like to view.</p>
+    
+    <div style="display: flex; justify-content: space-around; width: 100%; margin: 40px 0;">
+        <div class="player-container">
+            <p>Player 1</p>
+            <img src="{{ url_for('static', filename='/graphics/pla.png') }}" style="width: 100px; height: 100px;">
+            <br>
+            <select id="player1-select" class="player-select">
+                <option value="">Select Player 1</option>
+                <option value="Sav">Sav</option>
+                <option value="Voltaire">Voltaire</option>
+                <option value="Kim Joy">Kim Joy</option>
+                <option value="JL">JL</option>
+                <option value="Sar">Sar</option>
+                <option value="Gobi">Gobi</option>
+                <option value="Nowy">Nowy</option>
+                <option value="Peter">Peter</option>
+                <option value="LouLou">LouLou</option>
+                <option value="Benji">Benji</option>
+            </select>
+        </div>
+
+        <div class="player-container">
+            <p>Player 2</p>
+            <img src="{{ url_for('static', filename='/graphics/pla.png') }}" style="width: 100px; height: 100px;">
+            <br>
+            <select id="player2-select" class="player-select">
+                <option value="">Select Player 1</option>
+                <option value="Sav">Sav</option>
+                <option value="Voltaire">Voltaire</option>
+                <option value="Kim Joy">Kim Joy</option>
+                <option value="JL">JL</option>
+                <option value="Sar">Sar</option>
+                <option value="Gobi">Gobi</option>
+                <option value="Nowy">Nowy</option>
+                <option value="Peter">Peter</option>
+                <option value="LouLou">LouLou</option>
+                <option value="Benji">Benji</option>
+            </select>
+        </div>
+
+        <div class="player-container">
+            <p>Player 3</p>
+            <img src="{{ url_for('static', filename='/graphics/pla.png') }}" style="width: 100px; height: 100px;">
+            <br>
+            <select id="player3-select" class="player-select">
+                <option value="">Select Player 1</option>
+                <option value="Sav">Sav</option>
+                <option value="Voltaire">Voltaire</option>
+                <option value="Kim Joy">Kim Joy</option>
+                <option value="JL">JL</option>
+                <option value="Sar">Sar</option>
+                <option value="Gobi">Gobi</option>
+                <option value="Nowy">Nowy</option>
+                <option value="Peter">Peter</option>
+                <option value="LouLou">LouLou</option>
+                <option value="Benji">Benji</option>
+            </select>
+        </div>
+    </div>
+    <a class="button primary flex-item flex-margin-small submit">Continue</a>
+</div>
+<style>
+.player-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-select {
+    width: 200px;
+    padding: 5px;
+}
+
+select option:disabled {
+    color: #999;
+}
+</style>
+{% endblock %}
